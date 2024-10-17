@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css"> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <meta name="uncoded" content="uncoded" />
+    
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <meta name="robots" content="index, follow" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="language" content="English" />
+    <title> uncoded btc</title>
+  
+  </head>
+  <body>
+    <div class="content">
+      <br /><br />
+      <header>
+        <img class="shake-element" src="uncode_goat.gif" width="420" alt="" />
+      </header>
+      <br />
+      <img src="image.png" class="bounce-image" width="327" alt="" />
+  
+
+  
+
+      <br /><br /><br />
+     
+      <br /><br />
+      <div class="meme-maker">
+        <div id="imageCanvasContainer">
+          <canvas id="imageCanvas" width="500" height="500"></canvas>
+        </div>
+        <br /><br />
+        <div id="imageLoaderContainer">
+          <label for="imageLoader" class="upload-button" style="color: black;"
+            >Upload Image</label
+          >
+          <input
+            type="file"
+            id="imageLoader"
+            name="imageLoader"
+            accept="image/*" />
+        </div>
+        <div style="padding-bottom: 6px"></div>
+        <div id="buttonContainer">
+          <button id="flipButton" class="mint-button">
+            <span class="icon">&#x21c4;</span>
+          </button>
+          <button id="downloadButton" class="mint-button">
+            <span class="icon">&#x2b07;</span>
+          </button>
+        </div>
+      </div>
+      <br />
+      <footer>
+        
+    
+      </footer>
+      <br /><br />
+    </div>
+    <script>
+     
+      const canvas = new fabric.Canvas("imageCanvas");
+      let imageObject = null;
+      let stickerObject = null;
+      let placeholderObject = null;
+
+      fabric.Image.fromURL("placeholder2.png", function (placeholder) {
+        placeholderObject = placeholder;
+        placeholder.set({
+          selectable: false,
+          evented: false,
+        });
+        canvas.add(placeholder);
+      });
+
+      fabric.Image.fromURL("stickers.png", function (sticker) {
+        stickerObject = sticker;
+        sticker.set({
+          selectable: true,
+          left: canvas.width / 2 - sticker.width / 2,
+          top: canvas.height / 2 - sticker.height / 2,
+        });
+        canvas.add(sticker);
+        canvas.bringToFront(sticker); 
+      });
+      fabric.Image.fromURL("text.png", function (sticker) {
+        stickerObject = sticker;
+        sticker.set({
+          selectable: true,
+          left: canvas.width / 2 - sticker.width / 2,
+          top: canvas.height / 2 - sticker.height / 2,
+        });
+        canvas.add(sticker);
+        canvas.bringToFront(sticker); 
+      });
+
+      // Handle image upload
+      document
+        .getElementById("imageLoader")
+        .addEventListener("change", function (event) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            fabric.Image.fromURL(event.target.result, function (image) {
+              // Remove the existing image if there is one
+              if (imageObject) {
+                canvas.remove(imageObject);
+              }
+
+              // Remove the placeholder image if there is one
+              if (placeholderObject) {
+                canvas.remove(placeholderObject);
+              }
+
+              // Calculate the scale to fit the image within 500x500 while maintaining aspect ratio
+              const maxDimension = Math.max(image.width, image.height);
+              const scale = 500 / maxDimension;
+
+              imageObject = image;
+              image.set({
+                scaleX: scale,
+                scaleY: scale,
+                selectable: false,
+                evented: false,
+              });
+              canvas.setBackgroundImage(image, canvas.renderAll.bind(canvas), {
+                scaleX: scale,
+                scaleY: scale,
+                top: canvas.height / 2 - (image.height * scale) / 2,
+                left: canvas.width / 2 - (image.width * scale) / 2,
+              });
+
+              // Bring the sticker to the front
+              if (stickerObject) {
+                canvas.bringToFront(stickerObject);
+              }
+            });
+          };
+          reader.readAsDataURL(event.target.files[0]);
+        });
+
+        // Flip button click handler
+      document
+        .getElementById("flipButton")
+        .addEventListener("click", function () {
+          const activeObject = canvas.getActiveObject();
+          if (activeObject && activeObject !== imageObject) {
+            activeObject.set("flipX", !activeObject.flipX);
+            canvas.requestRenderAll();
+          }
+        });
+
+      // Download button click handler
+      document
+        .getElementById("downloadButton")
+        .addEventListener("click", function () {
+          if (imageObject) {
+            const dataURL = canvas.toDataURL({ format: "png" });
+            const a = document.createElement("a");
+            a.href = dataURL;
+            a.download = "image.png";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }
+        });
+
+    
+    </script>
+   
+  </body>
+</html>
